@@ -23,3 +23,33 @@ SELECT
 FROM orders
 GROUP BY order_hour
 ORDER BY total_orders DESC;
+
+-- Revenue by Restaurant
+SELECT 
+    r.restaurant_name,
+    SUM(o.order_amount) AS total_revenue
+FROM orders o
+JOIN restaurants r 
+    ON o.restaurant_id = r.restaurant_id
+GROUP BY r.restaurant_name
+ORDER BY total_revenue DESC;
+
+-- Revenue by City
+SELECT 
+    c.city,
+    SUM(o.order_amount) AS total_revenue
+FROM orders o
+JOIN customers c 
+    ON o.customer_id = c.customer_id
+GROUP BY c.city
+ORDER BY total_revenue DESC;
+
+-- Average Delivery Time by Restaurant
+SELECT 
+    r.restaurant_name,
+    AVG(o.delivery_time) AS avg_delivery_time
+FROM orders o
+JOIN restaurants r
+    ON o.restaurant_id = r.restaurant_id
+GROUP BY r.restaurant_name
+ORDER BY avg_delivery_time;
