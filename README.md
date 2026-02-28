@@ -7,7 +7,7 @@ Analyze food delivery transactional data to uncover revenue trends, customer beh
 
 ## 🛠 Tools Used
 - PostgreSQL
-- SQL (Joins, Aggregations, CTEs)
+- SQL (Aggregations)
 - Data Modeling
 
 ---
