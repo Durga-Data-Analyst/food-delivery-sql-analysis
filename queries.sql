@@ -1,55 +1,79 @@
--- Total Orders
-SELECT COUNT(*) AS total_orders
-FROM orders;
+SELECT * FROM food_delivery LIMIT 10;
 
--- Total Revenue
-SELECT SUM(order_amount) AS total_revenue
-FROM orders;
 
--- Top 5 Customers by Spending
+-- Top 10 highest rated restaurants
+SELECT restaurant,AVG(avg_ratings) AS avg_ratings FROM food_delivery
+GROUP BY restaurant
+ORDER BY avg_ratings DESC
+LIMIT 10 ;
+
+-- Restaurants with slowest delivery
+SELECT restaurant,AVG(delivery_time) AS Avg_delivery_time
+FROM food_delivery
+GROUP BY restaurant
+ORDER BY Avg_delivery_time;
+
+--Which city has highest average price?
+SELECT city,AVG(price) AS average_price 
+FROM food_delivery
+GROUP BY city
+ORDER BY average_price DESC ;
+
+--Which areas have most restaurants?
+SELECT area,COUNT(*) AS restaurant
+FROM food_delivery
+GROUP BY area
+ORDER BY restaurant DESC ;
+
+--Best rated city?
+SELECT city,(avg_ratings) AS average_ratings
+FROM food_delivery
+GROUP BY city
+ORDER BY average_ratings
+LIMIT 1;
+
+--Which city has highest  Average delivery time?
+SELECT city,AVG(delivery_time)as averge_delivery_time
+FROM food_delivery
+GROUP BY city
+ORDER BY averge_delivery_time DESC
+LIMIT 1;
+
+--Which restaurant causes delays?
+SELECT city,restaurant,AVG(delivery_time) AS averge_delivery_time
+FROM food_delivery
+GROUP BY city,restaurant
+ORDER BY averge_delivery_time 
+LIMIT 1;
+
+--Most common food types?
+SELECT food_type,COUNT(*)as Restaurant_count
+FROM food_delivery
+GROUP BY food_type
+ORDER BY Restaurant_count DESC 
+LIMIT 1;
+
+
+--Does high delivery time reduce ratings?
 SELECT 
-    customer_id,
-    COUNT(order_id) AS total_orders,
-    SUM(order_amount) AS total_spent
-FROM orders
-GROUP BY customer_id
-ORDER BY total_spent DESC
-LIMIT 5;
+     CASE
+	 WHEN delivery_time<=40 THEN 'fast'
+	 WHEN delivery_time BETWEEN 41 AND 60 THEN 'Medium'
+	 ELSE 'slow'
+	 END AS Delivery_category,
+AVG(avg_ratings) as avg_ratings
+FROM food_delivery
+GROUP BY Delivery_category;
 
--- Peak Order Hour
-SELECT 
-    EXTRACT(HOUR FROM order_time) AS order_hour,
-    COUNT(*) AS total_orders
-FROM orders
-GROUP BY order_hour
-ORDER BY total_orders DESC;
+--Identify premium partners.
+SELECT restaurant,
+       AVG(price) AS avg_price,
+       AVG(avg_ratings) AS rating
+FROM food_delivery
+GROUP BY restaurant
+HAVING AVG(price) > 500 AND AVG(avg_ratings) >= 4;
 
--- Revenue by Restaurant
-SELECT 
-    r.restaurant_name,
-    SUM(o.order_amount) AS total_revenue
-FROM orders o
-JOIN restaurants r 
-    ON o.restaurant_id = r.restaurant_id
-GROUP BY r.restaurant_name
-ORDER BY total_revenue DESC;
-
--- Revenue by City
-SELECT 
-    c.city,
-    SUM(o.order_amount) AS total_revenue
-FROM orders o
-JOIN customers c 
-    ON o.customer_id = c.customer_id
-GROUP BY c.city
-ORDER BY total_revenue DESC;
-
--- Average Delivery Time by Restaurant
-SELECT 
-    r.restaurant_name,
-    AVG(o.delivery_time) AS avg_delivery_time
-FROM orders o
-JOIN restaurants r
-    ON o.restaurant_id = r.restaurant_id
-GROUP BY r.restaurant_name
-ORDER BY avg_delivery_time;
+--Data Cleaning & Quality Audit	 
+SELECT * FROM food_delivery
+WHERE price IS NULL OR avg_ratings IS NULL ;
+  
